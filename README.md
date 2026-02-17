@@ -1,45 +1,11 @@
 # AI Code Assistant Boilerplate
 
-Claude Code CLI と GitHub Copilot の両方に対応した、開発最適化ボイラープレート。
+GitHub Copilot に対応した、開発最適化ボイラープレート。
 
 ## 対応ツール
 
-- **Claude Code**: `.claude/` 配下の設定を使用（agents, skills, rules, hooks）
 - **GitHub Copilot**: `.github/` 配下の設定と `Agent.md` を使用
 
-## Quick Start
-
-### Claude Code の場合
-
-```bash
-# 1. このリポジトリをクローン
-git clone https://github.com/yourname/claude-code-boilerplate.git
-
-# 2. 対象プロジェクトにセットアップ
-./github-copilot-boilerplate/init-claude.sh /path/to/your-project
-
-# 3. プロジェクト情報を編集
-cd /path/to/your-project
-
-# 4. Claude Codeを起動
-claude
-```
-
-### GitHub Copilot の場合
-
-```bash
-# 1. このリポジトリをクローン
-git clone https://github.com/yourname/claude-code-boilerplate.git
-
-# 2. .github ディレクトリと AGENTS.md をプロジェクトにコピー
-cp -r github-copilot-boilerplate/.github /path/to/your-project/
-cp github-copilot-boilerplate/AGENTS.md /path/to/your-project/
-
-# 3. AGENTS.md をプロジェクトに合わせて編集
-
-# 4. GitHub Copilot を使用
-# VS Code または GitHub CLI で Copilot Chat を起動
-```
 
 ## 構成
 
@@ -188,8 +154,6 @@ Skills は Claude Code のカスタムアクション機能です。旧来のス
 `.github/rules/` 内のファイルをプロジェクトの規約に合わせて編集してください。
 
 ## 詳細
-
-- **Claude Code 設定**: `.claude/` ディレクトリの構成は上記の「構成」セクションを参照
 - **GitHub Copilot 設定**: `.github/README.md` を参照
 
 ## License
