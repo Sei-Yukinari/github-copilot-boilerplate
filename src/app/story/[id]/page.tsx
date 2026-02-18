@@ -20,7 +20,7 @@ export default async function StoryPage({ params }: StoryPageProps) {
     const story = await getStoryById(id);
     const cached = getCachedTranslation(id);
     const translation = cached ?? (await translateStory(story));
-    if (!cached) {
+    if (!cached && !translation.error) {
       setCachedTranslation(id, translation);
     }
 

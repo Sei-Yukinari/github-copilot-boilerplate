@@ -31,12 +31,15 @@ export async function translateStory(story: Story): Promise<TranslationResult> {
     `URL: ${story.url ?? 'N/A'}`
   ].join('\n');
 
-  const res = await fetch(`${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY}`, {
+  const res = await fetch(GEMINI_API_URL, {
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { temperature: 0.2 }
     }),
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': process.env.GEMINI_API_KEY,
+    },
     method: 'POST'
   });
 
