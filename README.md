@@ -7,7 +7,7 @@ Hacker News のトップストーリーを要約・日本語翻訳して表示�
 ```bash
 npm install
 cp .env.local.example .env.local
-# .env.local に GEMINI_API_KEY を設定
+# .env.local に GEMINI_API_KEY / BASIC_AUTH_USER / BASIC_AUTH_PASSWORD を設定
 ```
 
 ## 主要コマンド
@@ -29,8 +29,11 @@ cp .env.local.example .env.local
 ## 環境変数
 
 - `GEMINI_API_KEY` (必須): Gemini API キー
+- `BASIC_AUTH_USER` (必須): Basic認証ユーザー名
+- `BASIC_AUTH_PASSWORD` (必須): Basic認証パスワード
 
 未設定時は翻訳をスキップし、原文表示と警告メッセージを表示します。
+Basic認証の値は public リポジトリにコミットせず、`.env.local` とデプロイ先の環境変数で管理してください。
 
 ## Phase 2 の挙動
 
