@@ -24,7 +24,7 @@ export default async function StoryPage({ params }: StoryPageProps) {
       storyId: id,
       error: error instanceof Error ? error.message : String(error),
     });
-    if (error instanceof Error && error.message.includes('404')) {
+    if (error instanceof Error && error.message.includes('Story not found')) {
       notFound();
     }
     throw error;
