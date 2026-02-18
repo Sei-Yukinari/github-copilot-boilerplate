@@ -10,6 +10,7 @@ out/
 dist/
 .turbo/
 .vercel/
+tsconfig.tsbuildinfo
 
 # Logs
 logs/
