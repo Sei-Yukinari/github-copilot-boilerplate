@@ -71,9 +71,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
+  let cacheSaved = true;
   if (!translation.error) {
-    await saveTranslation(story.id, translation);
+    try {
+      await saveTranslation(story.id, translation);
+    } catch (error) {
+      cacheSaved = false;
+      console.error('Failed to cache translation:', {
+        storyId: story.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   }
 
+  if (!cacheSaved) {
+    return NextResponse.json({
+      ...translation,
+      cacheWarning: 'Translation was generated but could not be cached due to an internal error.',
+    });
+  }
   return NextResponse.json(translation);
 }
