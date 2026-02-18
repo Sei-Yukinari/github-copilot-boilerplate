@@ -44,7 +44,7 @@ function isValidAuthorizationHeader(
   }
 }
 
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const expectedUser = process.env.BASIC_AUTH_USER;
   const expectedPassword = process.env.BASIC_AUTH_PASSWORD;
 
@@ -57,7 +57,9 @@ export function middleware(request: NextRequest): NextResponse {
     return unauthorizedResponse();
   }
 
-  if (!isValidAuthorizationHeader(authorization, expectedUser, expectedPassword)) {
+  if (
+    !isValidAuthorizationHeader(authorization, expectedUser, expectedPassword)
+  ) {
     return unauthorizedResponse();
   }
 
