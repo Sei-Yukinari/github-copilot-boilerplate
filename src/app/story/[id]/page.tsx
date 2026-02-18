@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { StoryDetail } from '@/components/StoryDetail';
-import { getCachedTranslation, setCachedTranslation } from '@/lib/cache';
+import { getTranslation, saveTranslation } from '@/lib/translation-store';
 import { translateStory } from '@/lib/gemini';
 import { getStoryById } from '@/lib/hackernews';
 
@@ -18,10 +18,10 @@ export default async function StoryPage({ params }: StoryPageProps) {
 
   try {
     const story = await getStoryById(id);
-    const cached = getCachedTranslation(id);
+    const cached = await getTranslation(id);
     const translation = cached ?? (await translateStory(story));
     if (!cached && !translation.error) {
-      setCachedTranslation(id, translation);
+      await saveTranslation(id, translation);
     }
 
     return <StoryDetail story={story} translation={translation} />;
@@ -30,3 +30,4 @@ export default async function StoryPage({ params }: StoryPageProps) {
     notFound();
   }
 }
+

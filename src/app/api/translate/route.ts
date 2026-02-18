@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { translateStory } from '@/lib/gemini';
+import { saveTranslation } from '@/lib/translation-store';
 import { Story } from '@/lib/types';
 
 function isValidStoryPayload(payload: unknown): payload is Story {
@@ -44,5 +45,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const story: Story = body;
   const translation = await translateStory(story);
+
+  if (!translation.error && story.id) {
+    await saveTranslation(story.id, translation);
+  }
+
   return NextResponse.json(translation);
 }
+
