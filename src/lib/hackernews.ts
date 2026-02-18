@@ -26,11 +26,21 @@ export async function getStoryById(id: number): Promise<Story> {
   if (!story) {
     throw new Error(`Story not found: ${id}`);
   }
+  if ((story as any).type !== 'story') {
+    throw new Error(`Unsupported item type for story ${id}: ${(story as any).type}`);
+  }
   return story;
 }
 
 /** 複数ストーリーを並列取得する */
 export async function getTopStoriesWithDetails(limit = 10): Promise<Story[]> {
   const ids = await getTopStories(limit);
-  return Promise.all(ids.map((id) => getStoryById(id)));
+  const results = await Promise.allSettled(ids.map((id) => getStoryById(id)));
+
+  return results
+    .filter(
+      (result): result is PromiseFulfilledResult<Story> =>
+        result.status === 'fulfilled'
+    )
+    .map((result) => result.value);
 }
