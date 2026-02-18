@@ -6,7 +6,7 @@ Hacker NewsのトップストーリーをGoogle Gemini APIで要約・日本語�
 
 ## 技術スタック
 
-- **フロントエンド**: Next.js 14+ (App Router), React 18+, TypeScript 5.x
+- **フロントエンド**: Next.js 16.x (App Router), React 18+, TypeScript 5.x
 - **スタイリング**: Tailwind CSS 3.x
 - **API統合**: Hacker News API, Google Gemini API
 - **ランタイム**: Node.js 18+
@@ -22,10 +22,12 @@ Hacker NewsのトップストーリーをGoogle Gemini APIで要約・日本語�
 ## ルール
 
 @.github/rules/code-style.md  
+@.github/rules/ts-rules.md  
+@.github/rules/front.md  
 @.github/rules/git-workflow.md  
 @.github/rules/testing.md  
 @.github/rules/security.md  
-@.github/rules/documentation.md  
+@.github/rules/documentation.md
 
 ## Persistent Memory（自動知見蓄積）
 
@@ -44,6 +46,7 @@ src/
 ├── app/                      # Next.js App Router
 │   ├── layout.tsx            # ルートレイアウト
 │   ├── page.tsx              # ホームページ（記事一覧）
+│   ├── globals.d.ts          # グローバル型宣言
 │   ├── story/[id]/page.tsx   # 記事詳細ページ
 │   └── api/translate/        # API Routes（翻訳エンドポイント）
 ├── components/               # Reactコンポーネント
@@ -55,8 +58,10 @@ src/
 ├── lib/                      # ユーティリティ・ロジック
 │   ├── hackernews.ts         # Hacker News API クライアント
 │   ├── gemini.ts             # Google Gemini API クライアント
-│   ├── cache.ts              # キャッシュ管理
+│   ├── db.ts                 # DB接続・操作
+│   ├── translation-store.ts  # 翻訳キャッシュ管理
 │   └── types.ts              # 型定義
+├── middleware.ts              # Basic認証ミドルウェア（全ルート対象）
 └── styles/
     └── globals.css           # グローバルスタイル
 ```
@@ -76,5 +81,7 @@ src/
 ### 環境変数
 
 - `GEMINI_API_KEY`: Google Gemini APIキー（必須）
+- `BASIC_AUTH_USER`: Basic認証ユーザー名（公開運用時）
+- `BASIC_AUTH_PASSWORD`: Basic認証パスワード（公開運用時）
 
 詳細な設計は @doc/architecture.md を参照
