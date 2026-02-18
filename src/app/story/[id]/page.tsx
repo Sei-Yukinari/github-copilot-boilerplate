@@ -16,12 +16,17 @@ export default async function StoryPage({ params }: StoryPageProps) {
     notFound();
   }
 
-  const story = await getStoryById(id);
-  const cached = getCachedTranslation(id);
-  const translation = cached ?? (await translateStory(story));
-  if (!cached) {
-    setCachedTranslation(id, translation);
-  }
+  try {
+    const story = await getStoryById(id);
+    const cached = getCachedTranslation(id);
+    const translation = cached ?? (await translateStory(story));
+    if (!cached) {
+      setCachedTranslation(id, translation);
+    }
 
-  return <StoryDetail story={story} translation={translation} />;
+    return <StoryDetail story={story} translation={translation} />;
+  } catch (error) {
+    // If the story is not found or there's an API failure, return 404
+    notFound();
+  }
 }
