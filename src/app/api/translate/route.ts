@@ -23,10 +23,12 @@ function isValidStoryPayload(payload: unknown): payload is Story {
     return false;
   }
 
+  const url = maybeStory.url;
+
   if (
-    typeof maybeStory.url !== 'string' ||
-    maybeStory.url.length === 0 ||
-    maybeStory.url.length > 2048
+    url !== undefined &&
+    url !== null &&
+    (typeof url !== 'string' || url.length === 0 || url.length > 2048)
   ) {
     return false;
   }
