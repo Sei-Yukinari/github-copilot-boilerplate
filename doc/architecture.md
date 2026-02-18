@@ -35,7 +35,7 @@ graph TB
     end
 
     Frontend -->|HTTP/HTTPS| AppRouter
-    AppRouter -->|GET /topstories.json<br/>GET /item/{id}.json| HN
+    AppRouter -->|GET /topstories.json<br/>GET /item/（id）.json| HN
     AppRouter -->|POST /generateContent| Gemini
 
     style Client fill:#e1f5ff
