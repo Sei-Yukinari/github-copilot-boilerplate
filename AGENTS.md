@@ -77,4 +77,8 @@ src/
 
 - `GEMINI_API_KEY`: Google Gemini APIキー（必須）
 
+## GitHub Copilot AI モデル
+
+GitHub Copilot のコードレビューや支援機能で使用される AI モデルについては @doc/copilot-models.md を参照
+
 詳細な設計は @doc/architecture.md を参照

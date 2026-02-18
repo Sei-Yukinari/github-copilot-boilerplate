@@ -72,6 +72,16 @@ GitHub Copilot は、プロジェクトのコンテキストとして以下を�
 2. `.github/agents/*.md`（必要に応じて）
 3. `.github/rules/*.md`（関連するファイル操作時）
 
+## AI モデルについて
+
+GitHub Copilot は複数の AI モデル（GPT-4o, Claude Sonnet, o1, Gemini など）をサポートしています。
+
+- デフォルトでは **Auto（自動選択）** が使用され、最適なモデルが自動的に選ばれます
+- コードレビュー時も同様に、選択されたモデル（または Auto）が使用されます
+- IDE の Copilot Chat でモデルを切り替えることも可能です
+
+詳細は [`/doc/copilot-models.md`](../doc/copilot-models.md) を参照してください。
+
 ## Claude Code との共存
 
 このプロジェクトは、Claude Code の `.claude` ディレクトリと GitHub Copilot の `.github` ディレクトリを両方保持しています。

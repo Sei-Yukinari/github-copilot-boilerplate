@@ -26,6 +26,16 @@ cp .env.local.example .env.local
 
 詳細設計は `doc/architecture.md` を参照してください。
 
+## GitHub Copilot について
+
+このプロジェクトでは GitHub Copilot を活用した開発を推奨しています。
+
+- **使用される AI モデル**: GPT-4o, Claude Sonnet, o1, Gemini など（Auto 選択がデフォルト）
+- **コードレビュー**: `.github/agents/reviewer.md` に定義された観点で自動レビュー
+- **開発支援**: カスタムルールとエージェントで効率的な開発体験
+
+詳細は [`doc/copilot-models.md`](doc/copilot-models.md) および [`.github/README.md`](.github/README.md) を参照してください。
+
 ## 環境変数
 
 - `GEMINI_API_KEY` (必須): Gemini API キー
