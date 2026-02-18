@@ -63,8 +63,10 @@ export function TranslatedContent({ translation }: TranslatedContentProps) {
   flushList(listStart);
 
   return (
-    <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
-      <h2 className="text-xl font-bold">日本語タイトル: {translation.titleJa}</h2>
+    <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 className="text-xl font-bold text-orange-600 border-b border-orange-100 pb-2">
+        {translation.titleJa}
+      </h2>
       <div className="space-y-3">{nodes}</div>
       {translation.warning ? <p className="text-sm text-amber-700">{translation.warning}</p> : null}
       {translation.error ? <p className="text-sm text-red-700">{translation.error}</p> : null}
