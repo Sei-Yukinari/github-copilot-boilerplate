@@ -22,6 +22,9 @@ pnpm-debug.log*
 # Coverage
 coverage/
 
+# TypeScript
+tsconfig.tsbuildinfo
+
 # Env files (track examples only)
 .env
 .env.*
