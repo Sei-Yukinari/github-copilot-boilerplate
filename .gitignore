@@ -28,6 +28,9 @@ coverage/
 !.env.example
 !.env.template
 
+# TypeScript build info
+*.tsbuildinfo
+
 # IDE/editor
 .idea/
 .vscode/
