@@ -25,6 +25,7 @@ export async function translateStory(story: Story): Promise<TranslationResult> {
     '可能ならURL先ページの内容を読み取り、日本語タイトルと日本語要約を作成してください。',
     'URL先にアクセスできない、または内容を取得できない場合は、タイトル情報のみを使って要約してください。',
     'その場合は warning に「リンク先へアクセスできなかったため、タイトルベースで要約しました。」を入れてください。',
+    'summaryJa は読みやすくなるよう整形してください。段落ごとに改行（\\n）で区切り、箇条書きがある場合は「・」を使い読みやすくしてください。',
     '出力はJSONのみで返し、キーは titleJa, summaryJa, warning としてください。warningは不要なら空文字で構いません。',
     `Title: ${story.title}`,
     `URL: ${story.url ?? 'N/A'}`
