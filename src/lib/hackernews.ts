@@ -5,7 +5,7 @@ const HN_BASE_URL = 'https://hacker-news.firebaseio.com/v0';
 /** Hacker Newsのトップストーリーを取得する */
 export async function getTopStories(limit = 10): Promise<number[]> {
   const res = await fetch(`${HN_BASE_URL}/topstories.json`, {
-    next: { revalidate: 300 }
+    next: { revalidate: 300 },
   });
   if (!res.ok) {
     throw new Error(`Failed to fetch top stories. Status: ${res.status}`);
@@ -17,7 +17,7 @@ export async function getTopStories(limit = 10): Promise<number[]> {
 /** Hacker Newsのストーリー詳細を取得する */
 export async function getStoryById(id: number): Promise<Story> {
   const res = await fetch(`${HN_BASE_URL}/item/${id}.json`, {
-    next: { revalidate: 3600 }
+    next: { revalidate: 3600 },
   });
   if (!res.ok) {
     throw new Error(`Failed to fetch story: ${id}`);
@@ -26,8 +26,8 @@ export async function getStoryById(id: number): Promise<Story> {
   if (!story) {
     throw new Error(`Story not found: ${id}`);
   }
-  if ((story as any).type !== 'story') {
-    throw new Error(`Unsupported item type for story ${id}: ${(story as any).type}`);
+  if (story.type !== 'story') {
+    throw new Error(`Unsupported item type for story ${id}: ${story.type}`);
   }
   return story;
 }

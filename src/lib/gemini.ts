@@ -77,11 +77,23 @@ export async function translateStory(story: Story): Promise<TranslationResult> {
     };
   }
 
-  const data = (await res.json()) as {
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  };
+  const data: unknown = await res.json();
 
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  const candidates =
+    typeof data === 'object' &&
+    data !== null &&
+    'candidates' in data &&
+    Array.isArray((data as { candidates: unknown }).candidates)
+      ? (
+          data as {
+            candidates: Array<{
+              content?: { parts?: Array<{ text?: string }> };
+            }>;
+          }
+        ).candidates
+      : [];
+
+  const text = candidates[0]?.content?.parts?.[0]?.text ?? '';
 
   try {
     const parsed = JSON.parse(extractJsonBlock(text)) as {
