@@ -16,18 +16,25 @@ export default async function StoryPage({ params }: StoryPageProps) {
     notFound();
   }
 
+  let story;
   try {
-    const story = await getStoryById(id);
-    const cached = await getTranslation(id);
-    const translation = cached ?? (await translateStory(story));
-    if (!cached && !translation.error) {
-      await saveTranslation(id, translation);
-    }
-
-    return <StoryDetail story={story} translation={translation} />;
+    story = await getStoryById(id);
   } catch (error) {
-    // If the story is not found or there's an API failure, return 404
-    notFound();
+    console.error('Failed to fetch story:', {
+      storyId: id,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    if (error instanceof Error && error.message.includes('404')) {
+      notFound();
+    }
+    throw error;
   }
-}
 
+  const cached = await getTranslation(id);
+  const translation = cached ?? (await translateStory(story));
+  if (!cached && !translation.error) {
+    await saveTranslation(id, translation);
+  }
+
+  return <StoryDetail story={story} translation={translation} />;
+}
