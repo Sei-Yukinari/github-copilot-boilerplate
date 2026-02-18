@@ -122,56 +122,63 @@ model Translation {
 
 ### 4.1 記事一覧取得フロー
 
-```
-User Request
-    ↓
-Next.js Server (app/page.tsx)
-    ↓
-lib/hackernews.ts: getTopStories()
-    ↓
-Hacker News API: /v0/topstories.json
-    ↓
-[記事ID配列を取得]
-    ↓
-lib/hackernews.ts: getTopStoriesWithDetails()
-    ↓
-Hacker News API: /v0/item/{id}.json (並列リクエスト)
-    ↓
-[記事詳細データを取得]
-    ↓
-Next.js Server (データをキャッシュ: 5分)
-    ↓
-Client Browser (HTML/React レンダリング)
+```mermaid
+sequenceDiagram
+    actor User
+    participant Page as app/page.tsx
+    participant HNLib as lib/hackernews.ts
+    participant HNAPI as Hacker News API
+    participant Browser as Client Browser
+
+    User->>Page: リクエスト
+    Page->>HNLib: getTopStories()
+    HNLib->>HNAPI: GET /v0/topstories.json
+    HNAPI-->>HNLib: [記事ID配列]
+    HNLib->>HNAPI: GET /v0/item/{id}.json（並列）
+    HNAPI-->>HNLib: 記事詳細データ（×30件）
+    HNLib-->>Page: stories[]（Next.js Data Cache: 5分）
+    Page-->>Browser: HTML/React レンダリング
 ```
 
 ### 4.2 記事翻訳フロー
 
-```
-User clicks Story Card
-    ↓
-Navigate to /story/[id]
-    ↓
-Next.js Server (app/story/[id]/page.tsx)
-    ↓
-lib/hackernews.ts: getStoryById(id)
-    ↓
-Hacker News API: /v0/item/{id}.json
-    ↓
-[記事データ取得]
-    ↓
-POST /api/translate（story を body に渡す）
-    ↓
-lib/translation-store.ts: getTranslation(storyId) → DBキャッシュ確認
-    ↓ キャッシュなしの場合
-lib/gemini.ts: translateStory(story)
-    ↓
-Google Gemini API: POST /v1beta/models/gemini-2.5-flash:generateContent
-    ↓
-[要約 + 翻訳テキストを JSON 形式で生成]
-    ↓
-lib/translation-store.ts: saveTranslation(storyId, result) → DB保存（24時間相当の永続化）
-    ↓
-Client Browser (翻訳済みコンテンツを表示)
+```mermaid
+sequenceDiagram
+    actor User
+    participant Browser as Client Browser
+    participant DetailPage as app/story/[id]/page.tsx
+    participant HNLib as lib/hackernews.ts
+    participant HNAPI as Hacker News API
+    participant TranslateAPI as POST /api/translate
+    participant Store as lib/translation-store.ts
+    participant DB as PostgreSQL
+    participant Gemini as lib/gemini.ts
+    participant GeminiAPI as Google Gemini API
+
+    User->>Browser: 記事カードをクリック
+    Browser->>DetailPage: /story/[id] へ遷移
+    DetailPage->>HNLib: getStoryById(id)
+    HNLib->>HNAPI: GET /v0/item/{id}.json
+    HNAPI-->>HNLib: 記事データ
+    HNLib-->>DetailPage: story
+    DetailPage->>TranslateAPI: POST /api/translate（story）
+    TranslateAPI->>Store: getTranslation(storyId)
+    Store->>DB: SELECT WHERE storyId = ?
+    alt キャッシュあり
+        DB-->>Store: 翻訳レコード
+        Store-->>TranslateAPI: TranslationResult
+    else キャッシュなし
+        DB-->>Store: null
+        Store-->>TranslateAPI: null
+        TranslateAPI->>Gemini: translateStory(story)
+        Gemini->>GeminiAPI: POST /v1beta/models/gemini-2.5-flash:generateContent
+        GeminiAPI-->>Gemini: 要約 + 翻訳テキスト（JSON）
+        Gemini-->>TranslateAPI: TranslationResult
+        TranslateAPI->>Store: saveTranslation(storyId, result)
+        Store->>DB: INSERT translation
+    end
+    TranslateAPI-->>Browser: TranslationResult
+    Browser->>Browser: 翻訳済みコンテンツを表示
 ```
 
 ---
