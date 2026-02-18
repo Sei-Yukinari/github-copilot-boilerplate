@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 
 function unauthorizedResponse(): NextResponse {
   return new NextResponse('Authentication required', {
@@ -38,7 +39,14 @@ function isValidAuthorizationHeader(
 
     const user = decoded.slice(0, separatorIndex);
     const password = decoded.slice(separatorIndex + 1);
-    return user === expectedUser && password === expectedPassword;
+    
+    // Use constant-time comparison to prevent timing attacks
+    const userMatch = user.length === expectedUser.length && 
+      timingSafeEqual(Buffer.from(user), Buffer.from(expectedUser));
+    const passwordMatch = password.length === expectedPassword.length && 
+      timingSafeEqual(Buffer.from(password), Buffer.from(expectedPassword));
+    
+    return userMatch && passwordMatch;
   } catch {
     return false;
   }
