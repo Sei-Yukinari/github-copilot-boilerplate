@@ -8,7 +8,7 @@ export async function getTopStories(limit = 10): Promise<number[]> {
     next: { revalidate: 300 }
   });
   if (!res.ok) {
-    throw new Error('Failed to fetch top stories.');
+    throw new Error(`Failed to fetch top stories. Status: ${res.status}`);
   }
   const ids = (await res.json()) as number[];
   return ids.slice(0, limit);
