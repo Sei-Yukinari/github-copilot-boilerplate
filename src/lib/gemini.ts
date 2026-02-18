@@ -65,7 +65,12 @@ export async function translateStory(story: Story): Promise<TranslationResult> {
       titleJa: parsed.titleJa ?? story.title,
       warning: parsed.warning || undefined
     };
-  } catch {
+  } catch (error) {
+    console.error('Failed to parse Gemini API response:', {
+      error: error instanceof Error ? error.message : String(error),
+      rawText: text,
+      storyTitle: story.title
+    });
     return {
       summaryJa: '要約の解析に失敗しました。タイトルベースの要約として扱ってください。',
       titleJa: story.title,
