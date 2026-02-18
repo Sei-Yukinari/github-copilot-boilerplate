@@ -32,5 +32,10 @@ export async function getStoryById(id: number): Promise<Story> {
 /** 複数ストーリーを並列取得する */
 export async function getTopStoriesWithDetails(limit = 10): Promise<Story[]> {
   const ids = await getTopStories(limit);
-  return Promise.all(ids.map((id) => getStoryById(id)));
+  const results = await Promise.allSettled(ids.map((id) => getStoryById(id)));
+  
+  // 成功した結果のみを返す（失敗したアイテムは除外）
+  return results
+    .filter((result): result is PromiseFulfilledResult<Story> => result.status === 'fulfilled')
+    .map((result) => result.value);
 }
