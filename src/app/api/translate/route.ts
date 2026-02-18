@@ -10,14 +10,26 @@ function isValidStoryPayload(payload: unknown): payload is Story {
   }
 
   const maybeStory = payload as { [key: string]: unknown };
-  const title = maybeStory.title;
-  const url = maybeStory.url;
 
-  if (typeof title !== 'string' || title.length === 0 || title.length > 256) {
+  if (typeof maybeStory.id !== 'number' || !Number.isInteger(maybeStory.id)) {
     return false;
   }
 
-  if (typeof url !== 'string' || url.length === 0 || url.length > 2048) {
+  if (
+    typeof maybeStory.title !== 'string' ||
+    maybeStory.title.length === 0 ||
+    maybeStory.title.length > 256
+  ) {
+    return false;
+  }
+
+  const url = maybeStory.url;
+
+  if (
+    url !== undefined &&
+    url !== null &&
+    (typeof url !== 'string' || url.length === 0 || url.length > 2048)
+  ) {
     return false;
   }
 
@@ -44,12 +56,39 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const story: Story = body;
-  const translation = await translateStory(story);
 
-  if (!translation.error && story.id) {
-    await saveTranslation(story.id, translation);
+  let translation;
+  try {
+    translation = await translateStory(story);
+  } catch (error) {
+    console.error('Translation failed:', {
+      storyId: story.id,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return NextResponse.json(
+      { error: 'Translation service error' },
+      { status: 503 }
+    );
   }
 
+  let cacheSaved = true;
+  if (!translation.error) {
+    try {
+      await saveTranslation(story.id, translation);
+    } catch (error) {
+      cacheSaved = false;
+      console.error('Failed to cache translation:', {
+        storyId: story.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  if (!cacheSaved) {
+    return NextResponse.json({
+      ...translation,
+      cacheWarning: 'Translation was generated but could not be cached due to an internal error.',
+    });
+  }
   return NextResponse.json(translation);
 }
-
