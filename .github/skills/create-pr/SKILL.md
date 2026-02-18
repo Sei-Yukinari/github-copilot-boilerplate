@@ -42,7 +42,7 @@ gh pr create --title "タイトル" --body "本文"
 ### 5. ブラウザで開く
 PR作成後、必ずブラウザでPRを開く:
 ```bash
-open <PR_URL>
+gh pr view --web
 ```
 
 ## 出力形式
