@@ -10,8 +10,11 @@
     "test": "node --test"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.4.0",
     "@prisma/client": "^7.4.0",
+    "@types/pg": "^8.16.0",
     "next": "latest",
+    "pg": "^8.18.0",
     "prisma": "^7.4.0",
     "react": "latest",
     "react-dom": "latest"
