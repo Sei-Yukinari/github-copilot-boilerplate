@@ -87,7 +87,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!cacheSaved) {
     return NextResponse.json({
       ...translation,
-      cacheWarning: 'Translation was generated but could not be cached due to an internal error.',
+      cacheWarning:
+        'Translation was generated but could not be cached due to an internal error.',
     });
   }
   return NextResponse.json(translation);

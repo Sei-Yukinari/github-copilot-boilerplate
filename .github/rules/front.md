@@ -9,6 +9,7 @@
 **デフォルトはServer Components**: `"use client"` は必要な場合のみ使用
 
 **Client Componentsが必要な場合**:
+
 - `useState`, `useEffect` などのReact Hooks使用時
 - イベントハンドラー（`onClick`, `onChange`等）使用時
 - ブラウザAPI（`window`, `localStorage`等）使用時
@@ -38,17 +39,17 @@ export function SearchInput({ onSearch }: { onSearch: (q: string) => void }) {
 
 ```typescript
 interface StoryCardProps {
-  story: Story
-  onSelect?: (id: number) => void
-  variant?: "compact" | "detailed"
-  children?: ReactNode
+  story: Story;
+  onSelect?: (id: number) => void;
+  variant?: 'compact' | 'detailed';
+  children?: ReactNode;
 }
 
-export function StoryCard({ 
-  story, 
-  onSelect, 
-  variant = "compact",
-  children 
+export function StoryCard({
+  story,
+  onSelect,
+  variant = 'compact',
+  children,
 }: StoryCardProps) {
   // 実装
 }
@@ -89,6 +90,7 @@ app/
 ### データフェッチング戦略
 
 **Server Componentsでのデータ取得**:
+
 ```typescript
 // app/page.tsx
 export default async function Page() {
@@ -101,17 +103,19 @@ export default async function Page() {
 ```
 
 **キャッシュ戦略**:
+
 - `{ cache: 'force-cache' }`: 永続キャッシュ（デフォルト）
 - `{ cache: 'no-store' }`: キャッシュなし（動的データ）
 - `{ next: { revalidate: 秒数 } }`: 指定秒数でキャッシュ再検証
 
 **並列データフェッチング**:
+
 ```typescript
 // 複数のfetchを並列実行
 const [stories, comments] = await Promise.all([
   fetchStories(),
-  fetchComments()
-])
+  fetchComments(),
+]);
 ```
 
 ### メタデータ管理
@@ -123,9 +127,9 @@ export const metadata: Metadata = {
   description: 'ページ説明',
   openGraph: {
     title: 'OGタイトル',
-    description: 'OG説明'
-  }
-}
+    description: 'OG説明',
+  },
+};
 ```
 
 ## 状態管理
@@ -133,24 +137,27 @@ export const metadata: Metadata = {
 ### React Hooks使用ガイドライン
 
 **useState**: ローカル状態管理
+
 ```typescript
-const [count, setCount] = useState(0)
-const [user, setUser] = useState<User | null>(null)
+const [count, setCount] = useState(0);
+const [user, setUser] = useState<User | null>(null);
 ```
 
 **useEffect**: 副作用処理（最小限に）
+
 ```typescript
 useEffect(() => {
   // 依存配列を必ず指定
-  const timer = setInterval(() => {}, 1000)
-  return () => clearInterval(timer) // クリーンアップ必須
-}, [dependency])
+  const timer = setInterval(() => {}, 1000);
+  return () => clearInterval(timer); // クリーンアップ必須
+}, [dependency]);
 ```
 
 **useMemo / useCallback**: パフォーマンス最適化（必要な場合のみ）
+
 ```typescript
-const expensiveValue = useMemo(() => computeExpensive(data), [data])
-const memoizedCallback = useCallback(() => doSomething(), [dependency])
+const expensiveValue = useMemo(() => computeExpensive(data), [data]);
+const memoizedCallback = useCallback(() => doSomething(), [dependency]);
 ```
 
 ### Context API使用方針
@@ -187,8 +194,8 @@ export function useTheme() {
 ```typescript
 import Image from "next/image"
 
-<Image 
-  src="/hero.jpg" 
+<Image
+  src="/hero.jpg"
   alt="Hero画像"
   width={800}
   height={600}
@@ -199,6 +206,7 @@ import Image from "next/image"
 ### 動的インポート（Code Splitting）
 
 **重いコンポーネントは遅延読み込み**:
+
 ```typescript
 import dynamic from "next/dynamic"
 
@@ -213,12 +221,15 @@ const HeavyChart = dynamic(() => import("@/components/HeavyChart"), {
 **必要な場合のみ使用**: 計測してから最適化
 
 ```typescript
-export const ExpensiveComponent = memo(function ExpensiveComponent({ data }: Props) {
-  // 重い処理
-}, (prevProps, nextProps) => {
-  // カスタム比較関数（必要な場合）
-  return prevProps.data.id === nextProps.data.id
-})
+export const ExpensiveComponent = memo(
+  function ExpensiveComponent({ data }: Props) {
+    // 重い処理
+  },
+  (prevProps, nextProps) => {
+    // カスタム比較関数（必要な場合）
+    return prevProps.data.id === nextProps.data.id;
+  }
+);
 ```
 
 ## スタイリング規約（Tailwind CSS）
@@ -241,11 +252,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#3b82f6'
-      }
-    }
-  }
-}
+        primary: '#3b82f6',
+      },
+    },
+  },
+};
 ```
 
 ### レスポンシブデザイン
@@ -261,6 +272,7 @@ export default {
 ### 条件付きスタイリング
 
 **clsxまたはcn()ユーティリティ使用**:
+
 ```typescript
 import { clsx } from "clsx"
 
@@ -276,6 +288,7 @@ import { clsx } from "clsx"
 ### セマンティックHTML
 
 **適切なHTML要素を使用**:
+
 ```typescript
 // 良い例
 <nav><ul><li><a href="/">ホーム</a></li></ul></nav>
@@ -304,6 +317,7 @@ import { clsx } from "clsx"
 ### キーボード操作
 
 **すべてのインタラクティブ要素はキーボード操作可能に**:
+
 ```typescript
 <div
   role="button"
@@ -324,17 +338,17 @@ Tailwindのデフォルトカラーは概ねWCAG AA準拠、重要なテキス�
 ```typescript
 // 基本
 interface ButtonProps {
-  variant: "primary" | "secondary"
-  size?: "sm" | "md" | "lg"
-  onClick: () => void
-  disabled?: boolean
-  children: ReactNode
+  variant: 'primary' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
+  onClick: () => void;
+  disabled?: boolean;
+  children: ReactNode;
 }
 
 // 拡張: ネイティブHTML属性を継承
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  error?: string
+  label: string;
+  error?: string;
 }
 ```
 
@@ -357,17 +371,17 @@ export function List<T>({ items, renderItem, keyExtractor }: ListProps<T>) {
 ```typescript
 // lib/types.ts
 export interface Story {
-  id: number
-  title: string
-  url?: string
-  score: number
-  by: string
-  time: number
+  id: number;
+  title: string;
+  url?: string;
+  score: number;
+  by: string;
+  time: number;
 }
 
 export interface ApiResponse<T> {
-  data: T
-  error?: string
+  data: T;
+  error?: string;
 }
 ```
 
@@ -402,7 +416,7 @@ export default function Error({
 
 export function DataComponent() {
   const [error, setError] = useState<Error | null>(null)
-  
+
   useEffect(() => {
     fetchData()
       .catch(err => {
@@ -410,7 +424,7 @@ export function DataComponent() {
         setError(err)
       })
   }, [])
-  
+
   if (error) return <ErrorMessage error={error} />
   // 正常系
 }
@@ -465,13 +479,13 @@ export function Form() {
 ### クライアントサイドバリデーション
 
 ```typescript
-const [errors, setErrors] = useState<Record<string, string>>({})
+const [errors, setErrors] = useState<Record<string, string>>({});
 
 function validateForm(data: FormData): boolean {
-  const newErrors: Record<string, string> = {}
-  if (!data.email) newErrors.email = "メールアドレスは必須です"
-  setErrors(newErrors)
-  return Object.keys(newErrors).length === 0
+  const newErrors: Record<string, string> = {};
+  if (!data.email) newErrors.email = 'メールアドレスは必須です';
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
 }
 ```
 
