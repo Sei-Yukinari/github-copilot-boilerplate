@@ -1,5 +1,4 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
 type HNItemType = 'story' | 'comment' | 'poll' | 'job' | 'pollopt';
 
@@ -26,21 +25,21 @@ describe('Story type', () => {
       time: 1700000000,
       descendants: 50,
     };
-    assert.equal(story.id, 12345);
-    assert.equal(story.type, 'story');
+    expect(story.id).toBe(12345);
+    expect(story.type).toBe('story');
   });
 
   it('必須フィールドのみで作成できる', () => {
     const story: Story = { id: 1, title: 'Minimal' };
-    assert.equal(story.id, 1);
-    assert.equal(story.url, undefined);
+    expect(story.id).toBe(1);
+    expect(story.url).toBeUndefined();
   });
 
   it('typeはHNItemType union型のみ許容する', () => {
     const types: HNItemType[] = ['story', 'comment', 'poll', 'job', 'pollopt'];
     types.forEach((t) => {
       const story: Story = { id: 1, title: 'Test', type: t };
-      assert.equal(story.type, t);
+      expect(story.type).toBe(t);
     });
   });
 });
@@ -58,8 +57,8 @@ describe('TranslationResult type', () => {
       titleJa: 'テストタイトル',
       summaryJa: 'テスト要約',
     };
-    assert.equal(result.titleJa, 'テストタイトル');
-    assert.equal(result.error, undefined);
+    expect(result.titleJa).toBe('テストタイトル');
+    expect(result.error).toBeUndefined();
   });
 
   it('エラー付き翻訳結果を作成できる', () => {
@@ -69,7 +68,7 @@ describe('TranslationResult type', () => {
       error: 'API error',
       warning: '注意事項',
     };
-    assert.equal(result.error, 'API error');
-    assert.equal(result.warning, '注意事項');
+    expect(result.error).toBe('API error');
+    expect(result.warning).toBe('注意事項');
   });
 });

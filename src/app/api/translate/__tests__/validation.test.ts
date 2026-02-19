@@ -1,5 +1,4 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
 // Replicate isValidStoryPayload for testing (not exported from route.ts)
 function isValidStoryPayload(
@@ -41,35 +40,35 @@ describe('isValidStoryPayload', () => {
       title: 'Test Story',
       url: 'https://example.com',
     };
-    assert.equal(isValidStoryPayload(payload), true);
+    expect(isValidStoryPayload(payload)).toBe(true);
   });
 
   it('nullを拒否する', () => {
-    assert.equal(isValidStoryPayload(null), false);
+    expect(isValidStoryPayload(null)).toBe(false);
   });
 
   it('文字列を拒否する', () => {
-    assert.equal(isValidStoryPayload('string'), false);
+    expect(isValidStoryPayload('string')).toBe(false);
   });
 
   it('idがないペイロードを拒否する', () => {
     const payload = { title: 'Test', url: 'https://example.com' };
-    assert.equal(isValidStoryPayload(payload), false);
+    expect(isValidStoryPayload(payload)).toBe(false);
   });
 
   it('idが文字列のペイロードを拒否する', () => {
     const payload = { id: '123', title: 'Test', url: 'https://example.com' };
-    assert.equal(isValidStoryPayload(payload), false);
+    expect(isValidStoryPayload(payload)).toBe(false);
   });
 
   it('idが小数のペイロードを拒否する', () => {
     const payload = { id: 1.5, title: 'Test', url: 'https://example.com' };
-    assert.equal(isValidStoryPayload(payload), false);
+    expect(isValidStoryPayload(payload)).toBe(false);
   });
 
   it('titleが空のペイロードを拒否する', () => {
     const payload = { id: 1, title: '', url: 'https://example.com' };
-    assert.equal(isValidStoryPayload(payload), false);
+    expect(isValidStoryPayload(payload)).toBe(false);
   });
 
   it('titleが256文字超のペイロードを拒否する', () => {
@@ -78,16 +77,16 @@ describe('isValidStoryPayload', () => {
       title: 'a'.repeat(257),
       url: 'https://example.com',
     };
-    assert.equal(isValidStoryPayload(payload), false);
+    expect(isValidStoryPayload(payload)).toBe(false);
   });
 
   it('urlがないペイロードを拒否する', () => {
     const payload = { id: 1, title: 'Test' };
-    assert.equal(isValidStoryPayload(payload), false);
+    expect(isValidStoryPayload(payload)).toBe(false);
   });
 
   it('urlが空のペイロードを拒否する', () => {
     const payload = { id: 1, title: 'Test', url: '' };
-    assert.equal(isValidStoryPayload(payload), false);
+    expect(isValidStoryPayload(payload)).toBe(false);
   });
 });
