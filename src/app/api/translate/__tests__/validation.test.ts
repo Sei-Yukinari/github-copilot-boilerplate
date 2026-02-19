@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 
 // Replicate isValidStoryPayload for testing (not exported from route.ts)
+// url is optional: undefined/null は許可、空文字・長すぎる文字列は拒否
 function isValidStoryPayload(
   payload: unknown
-): payload is { id: number; title: string; url: string } {
+): payload is { id: number; title: string; url?: string } {
   if (payload === null || typeof payload !== 'object') {
     return false;
   }
@@ -22,10 +23,12 @@ function isValidStoryPayload(
     return false;
   }
 
+  const url = maybeStory.url;
+
   if (
-    typeof maybeStory.url !== 'string' ||
-    maybeStory.url.length === 0 ||
-    maybeStory.url.length > 2048
+    url !== undefined &&
+    url !== null &&
+    (typeof url !== 'string' || url.length === 0 || url.length > 2048)
   ) {
     return false;
   }
@@ -34,12 +37,22 @@ function isValidStoryPayload(
 }
 
 describe('isValidStoryPayload', () => {
-  it('正常なペイロードを受け入れる', () => {
+  it('正常なペイロード（urlあり）を受け入れる', () => {
     const payload = {
       id: 123,
       title: 'Test Story',
       url: 'https://example.com',
     };
+    expect(isValidStoryPayload(payload)).toBe(true);
+  });
+
+  it('urlなしのペイロードを受け入れる（urlはoptional）', () => {
+    const payload = { id: 1, title: 'Test' };
+    expect(isValidStoryPayload(payload)).toBe(true);
+  });
+
+  it('url が null のペイロードを受け入れる', () => {
+    const payload = { id: 1, title: 'Test', url: null };
     expect(isValidStoryPayload(payload)).toBe(true);
   });
 
@@ -80,13 +93,17 @@ describe('isValidStoryPayload', () => {
     expect(isValidStoryPayload(payload)).toBe(false);
   });
 
-  it('urlがないペイロードを拒否する', () => {
-    const payload = { id: 1, title: 'Test' };
+  it('urlが空文字のペイロードを拒否する', () => {
+    const payload = { id: 1, title: 'Test', url: '' };
     expect(isValidStoryPayload(payload)).toBe(false);
   });
 
-  it('urlが空のペイロードを拒否する', () => {
-    const payload = { id: 1, title: 'Test', url: '' };
+  it('urlが2048文字超のペイロードを拒否する', () => {
+    const payload = {
+      id: 1,
+      title: 'Test',
+      url: 'https://example.com/' + 'a'.repeat(2048),
+    };
     expect(isValidStoryPayload(payload)).toBe(false);
   });
 });

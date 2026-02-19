@@ -30,7 +30,13 @@ export default async function StoryPage({ params }: StoryPageProps) {
     throw error;
   }
 
-  const cached = await getTranslation(id);
+  const cached = await getTranslation(id).catch((err) => {
+    console.error('Failed to fetch translation cache:', {
+      storyId: id,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return null;
+  });
   const translation = cached ?? (await translateStory(story));
 
   // stale-while-revalidate: 古いキャッシュは返しつつバックグラウンドで再翻訳
@@ -40,13 +46,18 @@ export default async function StoryPage({ params }: StoryPageProps) {
         if (!fresh.error) return saveTranslation(id, fresh);
       })
       .catch((err) =>
-        console.warn('Background re-translation failed:', {
+        console.error('Background re-translation failed:', {
           storyId: id,
           error: err instanceof Error ? err.message : String(err),
         })
       );
   } else if (!cached && !translation.error) {
-    await saveTranslation(id, translation);
+    await saveTranslation(id, translation).catch((err) =>
+      console.error('Failed to cache translation:', {
+        storyId: id,
+        error: err instanceof Error ? err.message : String(err),
+      })
+    );
   }
 
   return <StoryDetail story={story} translation={translation} />;

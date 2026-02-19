@@ -2,9 +2,40 @@ import { Story } from '@/lib/types';
 
 const HN_BASE_URL = 'https://hacker-news.firebaseio.com/v0';
 
+const MAX_RETRIES = 3;
+const RETRY_STATUS_CODES = [429, 500, 502, 503];
+
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  maxRetries: number = MAX_RETRIES
+): Promise<Response> {
+  let lastError: Error | undefined;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok || !RETRY_STATUS_CODES.includes(res.status)) {
+        return res;
+      }
+      lastError = new Error(`HTTP ${res.status}`);
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+    }
+    if (attempt < maxRetries - 1) {
+      const delay = Math.min(1000 * 2 ** attempt, 8000);
+      console.warn(
+        `HN API fetch failed, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`,
+        { url }
+      );
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  throw lastError ?? new Error('Retry failed');
+}
+
 /** Hacker Newsのトップストーリーを取得する */
 export async function getTopStories(limit = 10): Promise<number[]> {
-  const res = await fetch(`${HN_BASE_URL}/topstories.json`, {
+  const res = await fetchWithRetry(`${HN_BASE_URL}/topstories.json`, {
     next: { revalidate: 300 },
   });
   if (!res.ok) {
@@ -16,7 +47,7 @@ export async function getTopStories(limit = 10): Promise<number[]> {
 
 /** Hacker Newsのストーリー詳細を取得する */
 export async function getStoryById(id: number): Promise<Story> {
-  const res = await fetch(`${HN_BASE_URL}/item/${id}.json`, {
+  const res = await fetchWithRetry(`${HN_BASE_URL}/item/${id}.json`, {
     next: { revalidate: 3600 },
   });
   if (!res.ok) {

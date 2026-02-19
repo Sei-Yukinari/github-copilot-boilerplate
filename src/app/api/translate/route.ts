@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { translateStory } from '@/lib/gemini';
+import { checkRateLimit } from '@/lib/rate-limit';
 import { saveTranslation } from '@/lib/translation-store';
 import { Story } from '@/lib/types';
 
@@ -37,6 +38,25 @@ function isValidStoryPayload(payload: unknown): payload is Story {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    request.headers.get('x-real-ip') ??
+    'unknown';
+  const rateLimit = checkRateLimit(ip);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(
+            Math.ceil((rateLimit.resetAt - Date.now()) / 1000)
+          ),
+        },
+      }
+    );
+  }
+
   let body: unknown;
 
   try {

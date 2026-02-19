@@ -1,11 +1,11 @@
 import { prisma } from '@/lib/db';
 import { TranslationResult } from '@/lib/types';
 
-/** キャッシュの有効期間（ミリ秒）: 7日 */
-const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+/** キャッシュの有効期間（ミリ秒）: 24時間 */
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
-/** キャッシュが古い（再取得推奨）と判断する閾値: 3日 */
-const STALE_THRESHOLD_MS = 3 * 24 * 60 * 60 * 1000;
+/** キャッシュが古い（再取得推奨）と判断する閾値: 12時間 */
+const STALE_THRESHOLD_MS = 12 * 60 * 60 * 1000;
 
 export type CachedTranslation = TranslationResult & {
   /** trueの場合、バックグラウンドで再翻訳を推奨 */
@@ -15,47 +15,32 @@ export type CachedTranslation = TranslationResult & {
 export async function getTranslation(
   storyId: number
 ): Promise<CachedTranslation | null> {
-  try {
-    const row = await prisma.translation.findUnique({ where: { storyId } });
-    if (!row) return null;
+  const row = await prisma.translation.findUnique({ where: { storyId } });
+  if (!row) return null;
 
-    const age = Date.now() - row.updatedAt.getTime();
+  const age = Date.now() - row.updatedAt.getTime();
 
-    // TTL超過: キャッシュ無効として扱う
-    if (age > CACHE_TTL_MS) {
-      return null;
-    }
-
-    return {
-      titleJa: row.titleJa,
-      summaryJa: row.summaryJa,
-      isStale: age > STALE_THRESHOLD_MS,
-    };
-  } catch (error) {
-    console.error('Failed to fetch translation from DB:', {
-      storyId,
-      error: error instanceof Error ? error.message : String(error),
-    });
+  // TTL超過: キャッシュ無効として扱う
+  if (age > CACHE_TTL_MS) {
     return null;
   }
+
+  return {
+    titleJa: row.titleJa,
+    summaryJa: row.summaryJa,
+    isStale: age > STALE_THRESHOLD_MS,
+  };
 }
 
 export async function saveTranslation(
   storyId: number,
   result: TranslationResult
 ): Promise<void> {
-  try {
-    await prisma.translation.upsert({
-      where: { storyId },
-      update: { titleJa: result.titleJa, summaryJa: result.summaryJa },
-      create: { storyId, titleJa: result.titleJa, summaryJa: result.summaryJa },
-    });
-  } catch (error) {
-    console.error('Failed to save translation to DB:', {
-      storyId,
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
+  await prisma.translation.upsert({
+    where: { storyId },
+    update: { titleJa: result.titleJa, summaryJa: result.summaryJa },
+    create: { storyId, titleJa: result.titleJa, summaryJa: result.summaryJa },
+  });
 }
 
 /** TTLを超過した古いキャッシュを一括削除する */
