@@ -19,14 +19,18 @@ export function StoryCard({ rank, story }: StoryCardProps) {
             {rank}
           </span>
           <div className="flex-1 min-w-0">
-            <p className="text-base font-semibold leading-snug text-slate-800 group-hover:underline">
+            <p className="text-base font-semibold leading-snug text-slate-800">
               {story.title}
             </p>
             <div className="mt-2 flex flex-wrap gap-3 text-xs text-slate-500">
-              <span>▲ {story.score ?? 0} points</span>
+              <span aria-label={`${story.score ?? 0}ポイント`}>
+                ▲ {story.score ?? 0} points
+              </span>
               {story.by && <span>by {story.by}</span>}
               {story.descendants != null && (
-                <span>💬 {story.descendants} comments</span>
+                <span aria-label={`${story.descendants}件のコメント`}>
+                  💬 {story.descendants} comments
+                </span>
               )}
             </div>
           </div>
