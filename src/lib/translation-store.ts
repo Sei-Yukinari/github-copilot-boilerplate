@@ -1,13 +1,36 @@
 import { prisma } from '@/lib/db';
 import { TranslationResult } from '@/lib/types';
 
+/** キャッシュの有効期間（ミリ秒）: 7日 */
+const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** キャッシュが古い（再取得推奨）と判断する閾値: 3日 */
+const STALE_THRESHOLD_MS = 3 * 24 * 60 * 60 * 1000;
+
+export type CachedTranslation = TranslationResult & {
+  /** trueの場合、バックグラウンドで再翻訳を推奨 */
+  isStale?: boolean;
+};
+
 export async function getTranslation(
   storyId: number
-): Promise<TranslationResult | null> {
+): Promise<CachedTranslation | null> {
   try {
     const row = await prisma.translation.findUnique({ where: { storyId } });
     if (!row) return null;
-    return { titleJa: row.titleJa, summaryJa: row.summaryJa };
+
+    const age = Date.now() - row.updatedAt.getTime();
+
+    // TTL超過: キャッシュ無効として扱う
+    if (age > CACHE_TTL_MS) {
+      return null;
+    }
+
+    return {
+      titleJa: row.titleJa,
+      summaryJa: row.summaryJa,
+      isStale: age > STALE_THRESHOLD_MS,
+    };
   } catch (error) {
     console.error('Failed to fetch translation from DB:', {
       storyId,
@@ -33,4 +56,13 @@ export async function saveTranslation(
       error: error instanceof Error ? error.message : String(error),
     });
   }
+}
+
+/** TTLを超過した古いキャッシュを一括削除する */
+export async function cleanupExpiredTranslations(): Promise<number> {
+  const cutoff = new Date(Date.now() - CACHE_TTL_MS);
+  const { count } = await prisma.translation.deleteMany({
+    where: { updatedAt: { lt: cutoff } },
+  });
+  return count;
 }

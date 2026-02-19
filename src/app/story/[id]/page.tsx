@@ -32,7 +32,20 @@ export default async function StoryPage({ params }: StoryPageProps) {
 
   const cached = await getTranslation(id);
   const translation = cached ?? (await translateStory(story));
-  if (!cached && !translation.error) {
+
+  // stale-while-revalidate: 古いキャッシュは返しつつバックグラウンドで再翻訳
+  if (cached?.isStale) {
+    translateStory(story)
+      .then((fresh) => {
+        if (!fresh.error) return saveTranslation(id, fresh);
+      })
+      .catch((err) =>
+        console.warn('Background re-translation failed:', {
+          storyId: id,
+          error: err instanceof Error ? err.message : String(err),
+        })
+      );
+  } else if (!cached && !translation.error) {
     await saveTranslation(id, translation);
   }
 
