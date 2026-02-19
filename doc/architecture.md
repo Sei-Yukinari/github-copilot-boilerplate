@@ -54,7 +54,7 @@ graph TB
 | HTTP クライアント | Fetch API    | Native            | API通信                      |
 | ORM               | Prisma       | latest            | DB操作（PostgreSQL）         |
 | データベース      | PostgreSQL   | -                 | 翻訳キャッシュ永続化         |
-| ランタイム        | Node.js      | 18+               | サーバーサイド実行           |
+| ランタイム        | Node.js      | 24+               | サーバーサイド実行           |
 
 ---
 

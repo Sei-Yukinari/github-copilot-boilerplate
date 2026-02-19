@@ -9,7 +9,7 @@ Hacker NewsのトップストーリーをGoogle Gemini APIで要約・日本語�
 - **フロントエンド**: Next.js 16.x (App Router), React 18+, TypeScript 5.x
 - **スタイリング**: Tailwind CSS 3.x
 - **API統合**: Hacker News API, Google Gemini API
-- **ランタイム**: Node.js 18+
+- **ランタイム**: Node.js 24+
 - **デプロイ**: Vercel (推奨)
 
 ## 主要コマンド
