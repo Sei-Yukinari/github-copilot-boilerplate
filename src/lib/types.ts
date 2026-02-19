@@ -1,3 +1,5 @@
+export type HNItemType = 'story' | 'comment' | 'poll' | 'job' | 'pollopt';
+
 export type Story = {
   by?: string;
   descendants?: number;
@@ -5,7 +7,7 @@ export type Story = {
   score?: number;
   time?: number;
   title: string;
-  type?: string;
+  type?: HNItemType;
   url?: string;
 };
 
