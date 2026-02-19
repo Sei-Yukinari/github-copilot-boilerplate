@@ -3,12 +3,38 @@ import { Story, TranslationResult } from '@/lib/types';
 const GEMINI_API_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
+const MAX_RETRIES = 3;
+const RETRY_STATUS_CODES = [429, 500, 502, 503];
+
 function extractJsonBlock(text: string): string {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
   if (fenced?.[1]) {
     return fenced[1].trim();
   }
   return text.trim();
+}
+
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  maxRetries: number = MAX_RETRIES
+): Promise<Response> {
+  let lastError: Error | undefined;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const res = await fetch(url, options);
+    if (res.ok || !RETRY_STATUS_CODES.includes(res.status)) {
+      return res;
+    }
+    lastError = new Error(`HTTP ${res.status}`);
+    if (attempt < maxRetries) {
+      const delay = Math.min(1000 * 2 ** attempt, 8000);
+      console.warn(
+        `Gemini API returned ${res.status}, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`
+      );
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  throw lastError ?? new Error('Retry failed');
 }
 
 /** Gemini APIで要約と日本語翻訳を生成する */
@@ -37,7 +63,7 @@ export async function translateStory(story: Story): Promise<TranslationResult> {
 
   let res: Response;
   try {
-    res = await fetch(GEMINI_API_URL, {
+    res = await fetchWithRetry(GEMINI_API_URL, {
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { temperature: 0.2 },

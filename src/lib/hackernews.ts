@@ -37,10 +37,20 @@ export async function getTopStoriesWithDetails(limit = 10): Promise<Story[]> {
   const ids = await getTopStories(limit);
   const results = await Promise.allSettled(ids.map((id) => getStoryById(id)));
 
-  return results
-    .filter(
-      (result): result is PromiseFulfilledResult<Story> =>
-        result.status === 'fulfilled'
-    )
-    .map((result) => result.value);
+  const stories: Story[] = [];
+  results.forEach((result, i) => {
+    if (result.status === 'fulfilled') {
+      stories.push(result.value);
+    } else {
+      console.warn('Failed to fetch story:', {
+        storyId: ids[i],
+        error:
+          result.reason instanceof Error
+            ? result.reason.message
+            : String(result.reason),
+      });
+    }
+  });
+
+  return stories;
 }

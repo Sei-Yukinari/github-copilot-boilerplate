@@ -6,10 +6,11 @@ type TranslatedContentProps = {
 
 /** **bold** を <strong> に変換してReact要素の配列を返す */
 function renderInline(text: string): React.ReactNode[] {
-  const parts = text.split(/\*\*(.+?)\*\*/g);
-  return parts.map((part, i) =>
-    i % 2 === 1 ? <strong key={i}>{part}</strong> : part
-  );
+  const parts = text.split(/(\*\*.+?\*\*)/g);
+  return parts.map((part, i) => {
+    const bold = part.match(/^\*\*(.+)\*\*$/);
+    return bold ? <strong key={`b-${i}`}>{bold[1]}</strong> : part;
+  });
 }
 
 /** 行をパースして適切な要素を返す */
@@ -68,8 +69,12 @@ export function TranslatedContent({ translation }: TranslatedContentProps) {
         {translation.titleJa}
       </h2>
       <div className="space-y-3">{nodes}</div>
-      {translation.warning ? <p className="text-sm text-amber-700">{translation.warning}</p> : null}
-      {translation.error ? <p className="text-sm text-red-700">{translation.error}</p> : null}
+      {translation.warning ? (
+        <p className="text-sm text-amber-700">{translation.warning}</p>
+      ) : null}
+      {translation.error ? (
+        <p className="text-sm text-red-700">{translation.error}</p>
+      ) : null}
     </section>
   );
 }
