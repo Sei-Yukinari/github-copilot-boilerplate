@@ -17,11 +17,15 @@ export function StoryDetail({ story, translation }: StoryDetailProps) {
         </Link>
       </div>
       <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-800 leading-snug">{story.title}</h1>
+        <h1 className="text-2xl font-bold text-slate-800 leading-snug">
+          {story.title}
+        </h1>
         <div className="flex flex-wrap gap-4 text-sm text-slate-500">
           {story.by && <span>by {story.by}</span>}
           <span>▲ {story.score ?? 0} points</span>
-          {story.descendants != null && <span>💬 {story.descendants} comments</span>}
+          {story.descendants != null && (
+            <span>💬 {story.descendants} comments</span>
+          )}
         </div>
         {story.url ? (
           <Link

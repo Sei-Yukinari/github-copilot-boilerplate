@@ -2,7 +2,7 @@
 name: check
 description: lint, typecheck, test を一括実行して結果をサマリーする
 context: fork
-allowed-tools: "Read, Bash, Grep, Glob"
+allowed-tools: 'Read, Bash, Grep, Glob'
 ---
 
 # /check - 品質チェック一括実行
@@ -12,17 +12,21 @@ lint、型チェック、テストを一括で実行し、結果をサマリー�
 ## 実行手順
 
 ### 1. チェックコマンドの検出
+
 `package.json` の `scripts` から以下を検出：
+
 - **lint**: `lint`, `eslint`, `biome check`
 - **typecheck**: `typecheck`, `type-check`, `tsc --noEmit`
 - **test**: `test`, `jest`, `vitest`
 
 他の言語の場合：
+
 - Python: `ruff check`, `mypy`, `pytest`
 - Go: `golangci-lint run`, `go vet`, `go test ./...`
 - Rust: `cargo clippy`, `cargo test`
 
 ### 2. 順次実行
+
 以下の順序で実行（前のステップが失敗しても次を実行）：
 
 1. **Lint** → 結果を記録
@@ -45,5 +49,6 @@ lint、型チェック、テストを一括で実行し、結果をサマリー�
 ```
 
 ## 注意事項
+
 - `context: fork` により、メインコンテキストを消費しない
 - チェックコマンドが見つからない場合はスキップしてその旨を報告

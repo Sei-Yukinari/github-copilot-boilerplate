@@ -17,8 +17,8 @@
 describe('StoryCard', () => {
   it('タイトルが正しく表示される', () => {
     // test code
-  })
-})
+  });
+});
 ```
 
 ### テスト構造
@@ -28,14 +28,16 @@ describe('StoryCard', () => {
 ```typescript
 it('正常なケースのテスト', () => {
   // Arrange: テストデータの準備
-  const input = { /* ... */ }
-  
+  const input = {
+    /* ... */
+  };
+
   // Act: テスト対象の実行
-  const result = targetFunction(input)
-  
+  const result = targetFunction(input);
+
   // Assert: 結果の検証
-  expect(result).toBe(expected)
-})
+  expect(result).toBe(expected);
+});
 ```
 
 ### モック化

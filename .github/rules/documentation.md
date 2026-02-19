@@ -27,7 +27,7 @@ export async function fetchStory(storyId: number): Promise<Story | null> {
 
 ```typescript
 // Gemini APIのレート制限回避のため5分間キャッシュ
-const CACHE_DURATION = 5 * 60 * 1000
+const CACHE_DURATION = 5 * 60 * 1000;
 ```
 
 ## プロジェクトドキュメント
@@ -35,6 +35,7 @@ const CACHE_DURATION = 5 * 60 * 1000
 ### README.md
 
 必須項目：
+
 - プロジェクト概要
 - セットアップ手順
 - 主要コマンド（dev, build, test, lint）

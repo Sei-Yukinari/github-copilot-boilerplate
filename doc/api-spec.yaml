@@ -26,13 +26,13 @@ paths:
                 summary: 基本的なリクエスト
                 value:
                   id: 12345678
-                  title: "Show HN: A new open source project"
-                  url: "https://example.com/article"
+                  title: 'Show HN: A new open source project'
+                  url: 'https://example.com/article'
               minimal:
                 summary: 最小リクエスト（URLなし）
                 value:
                   id: 12345678
-                  title: "Ask HN: What are you working on?"
+                  title: 'Ask HN: What are you working on?'
       responses:
         '200':
           description: 翻訳成功
@@ -44,20 +44,20 @@ paths:
                 success:
                   summary: 正常な翻訳結果
                   value:
-                    titleJa: "Show HN: 新しいオープンソースプロジェクト"
-                    summaryJa: "この記事では新しいオープンソースプロジェクトについて紹介しています。..."
+                    titleJa: 'Show HN: 新しいオープンソースプロジェクト'
+                    summaryJa: 'この記事では新しいオープンソースプロジェクトについて紹介しています。...'
                 withCacheWarning:
                   summary: 翻訳成功だがキャッシュ保存失敗
                   value:
-                    titleJa: "翻訳されたタイトル"
-                    summaryJa: "要約テキスト"
-                    cacheWarning: "Translation was generated but could not be cached due to an internal error."
+                    titleJa: '翻訳されたタイトル'
+                    summaryJa: '要約テキスト'
+                    cacheWarning: 'Translation was generated but could not be cached due to an internal error.'
                 withError:
                   summary: 翻訳処理内でのエラー（部分的結果）
                   value:
-                    titleJa: ""
-                    summaryJa: ""
-                    error: "JSON parse error in Gemini response"
+                    titleJa: ''
+                    summaryJa: ''
+                    error: 'JSON parse error in Gemini response'
         '400':
           description: リクエスト不正
           content:
@@ -68,11 +68,11 @@ paths:
                 invalidJson:
                   summary: JSON解析エラー
                   value:
-                    error: "Invalid JSON payload"
+                    error: 'Invalid JSON payload'
                 invalidPayload:
                   summary: バリデーションエラー
                   value:
-                    error: "Invalid story payload"
+                    error: 'Invalid story payload'
         '503':
           description: 翻訳サービスエラー（Gemini API障害等）
           content:
@@ -80,7 +80,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               example:
-                error: "Translation service error"
+                error: 'Translation service error'
 
 components:
   schemas:
@@ -99,13 +99,13 @@ components:
           minLength: 1
           maxLength: 256
           description: 記事タイトル
-          example: "Show HN: A new open source project"
+          example: 'Show HN: A new open source project'
         url:
           type: string
           maxLength: 2048
           nullable: true
           description: 記事のURL（Ask HN等URLなしの場合は省略可）
-          example: "https://example.com/article"
+          example: 'https://example.com/article'
         by:
           type: string
           description: 投稿者ユーザー名（任意）

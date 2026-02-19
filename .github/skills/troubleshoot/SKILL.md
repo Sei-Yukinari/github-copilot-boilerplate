@@ -1,8 +1,8 @@
 ---
 name: troubleshoot
 description: エラーメッセージやログから原因を特定し修正案を提示する
-argument-hint: "[error message or description]"
-allowed-tools: "Read, Grep, Glob, Bash, WebSearch"
+argument-hint: '[error message or description]'
+allowed-tools: 'Read, Grep, Glob, Bash, WebSearch'
 ---
 
 # /troubleshoot - トラブルシュート
@@ -10,28 +10,32 @@ allowed-tools: "Read, Grep, Glob, Bash, WebSearch"
 エラーメッセージやログから原因を特定し、修正案を提示します。
 
 ## 引数
+
 - `$ARGUMENTS` からエラーメッセージまたは問題の説明を取得
 
 ## 実行手順
 
 ### 1. エラー解析
+
 - エラーメッセージの種類を特定（構文エラー、ランタイムエラー、型エラー等）
 - スタックトレースからエラー発生箇所を特定
 - エラーコードがある場合はその意味を確認
 
 ### 2. 関連コードの調査
+
 - エラー発生箇所のコードを読み込み
 - 関連するインポート・依存関係を確認
 - 最近の変更（git log/diff）を確認
 
 ### 3. Web検索（必要な場合）
+
 - エラーメッセージで検索
 - 既知の問題・ワークアラウンドを調査
 - 公式ドキュメントを確認
 
 ### 4. 修正案の提示
 
-```
+````
 ## トラブルシュート結果
 
 ### エラー
@@ -48,15 +52,19 @@ allowed-tools: "Read, Grep, Glob, Bash, WebSearch"
 ```diff
 - 修正前のコード
 + 修正後のコード
-```
+````
 
 #### 案2（代替）
+
 ...
 
 ### 再発防止
+
 - 提案事項
+
 ```
 
 ## 注意事項
 - 修正は提案のみ。実際のコード変更はメインエージェントが行う
 - 複数の原因が考えられる場合は、可能性の高い順に列挙
+```

@@ -4,7 +4,7 @@
 
 ## ブランチ戦略
 
-- **ブランチ命名**: 
+- **ブランチ命名**:
   - `feature/<description>` - 新機能開発
   - `fix/<description>` - バグ修正
   - `chore/<description>` - 雑務（依存更新、設定変更等）
