@@ -20,7 +20,7 @@ async function fetchWithRetry(
   maxRetries: number = MAX_RETRIES
 ): Promise<Response> {
   let lastError: Error | undefined;
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
     const res = await fetch(url, options);
     if (res.ok || !RETRY_STATUS_CODES.includes(res.status)) {
       return res;
