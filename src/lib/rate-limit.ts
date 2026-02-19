@@ -23,10 +23,11 @@ export function checkRateLimit(ip: string): RateLimitResult {
     return { allowed: false, remaining: 0, resetAt: entry.resetAt };
   }
 
-  entry.count++;
+  const newCount = entry.count + 1;
+  rateLimitMap.set(ip, { count: newCount, resetAt: entry.resetAt });
   return {
     allowed: true,
-    remaining: MAX_REQUESTS - entry.count,
+    remaining: MAX_REQUESTS - newCount,
     resetAt: entry.resetAt,
   };
 }
