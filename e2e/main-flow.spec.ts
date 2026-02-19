@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('ホームページ', () => {
   test('トップストーリー一覧が表示される', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('h1, header')).toBeVisible();
+    await expect(page.locator('header')).toBeVisible();
     // 記事カードが少なくとも1つ表示される
     const cards = page.locator(
       'article, [data-testid="story-card"], a[href^="/story/"]'
