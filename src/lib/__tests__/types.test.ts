@@ -18,7 +18,7 @@ describe('Story type', () => {
   });
 
   it('必須フィールドのみで作成できる', () => {
-    const story = { id: 1, title: 'Minimal' } satisfies Story;
+    const story: Story = { id: 1, title: 'Minimal' };
     expect(story.id).toBe(1);
     expect(story.url).toBeUndefined();
   });
@@ -26,7 +26,7 @@ describe('Story type', () => {
   it('typeはHNItemType union型のみ許容する', () => {
     const types: HNItemType[] = ['story', 'comment', 'poll', 'job', 'pollopt'];
     types.forEach((t) => {
-      const story = { id: 1, title: 'Test', type: t } satisfies Story;
+      const story: Story = { id: 1, title: 'Test', type: t };
       expect(story.type).toBe(t);
     });
   });
@@ -34,10 +34,10 @@ describe('Story type', () => {
 
 describe('TranslationResult type', () => {
   it('正常な翻訳結果を作成できる', () => {
-    const result = {
+    const result: TranslationResult = {
       titleJa: 'テストタイトル',
       summaryJa: 'テスト要約',
-    } satisfies TranslationResult;
+    };
     expect(result.titleJa).toBe('テストタイトル');
     expect(result.error).toBeUndefined();
   });
