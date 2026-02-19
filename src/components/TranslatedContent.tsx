@@ -1,74 +1,44 @@
+import ReactMarkdown from 'react-markdown';
 import { TranslationResult } from '@/lib/types';
 
 type TranslatedContentProps = {
   translation: TranslationResult;
 };
 
-/** **bold** を <strong> に変換してReact要素の配列を返す */
-function renderInline(text: string): React.ReactNode[] {
-  const parts = text.split(/(\*\*.+?\*\*)/g);
-  return parts.map((part, i) => {
-    const bold = part.match(/^\*\*(.+)\*\*$/);
-    return bold ? <strong key={`b-${i}`}>{bold[1]}</strong> : part;
-  });
-}
-
-/** 行をパースして適切な要素を返す */
-function renderLine(line: string, i: number): React.ReactNode {
-  const trimmed = line.trim();
-  if (trimmed === '') return null;
-
-  if (trimmed.startsWith('・')) {
-    const content = trimmed.slice(1).trim();
-    return (
-      <li key={i} className="ml-2 text-base leading-relaxed">
-        {renderInline(content)}
-      </li>
-    );
-  }
-  return (
-    <p key={i} className="leading-relaxed">
-      {renderInline(trimmed)}
-    </p>
-  );
+/** Gemini API 出力の「・」箇条書きをMarkdownリスト記法に変換する */
+function preprocessMarkdown(text: string): string {
+  return text
+    .split('\n')
+    .map((line) =>
+      line.trim().startsWith('・') ? `- ${line.trim().slice(1).trim()}` : line
+    )
+    .join('\n');
 }
 
 export function TranslatedContent({ translation }: TranslatedContentProps) {
-  const lines = translation.summaryJa.split('\n');
-
-  // 箇条書き行とそれ以外をグループ化してレンダリング
-  const nodes: React.ReactNode[] = [];
-  let listBuffer: string[] = [];
-  let listStart = 0;
-
-  const flushList = (key: number) => {
-    if (listBuffer.length === 0) return;
-    nodes.push(
-      <ul key={`ul-${key}`} className="space-y-1 text-lg list-none">
-        {listBuffer.map((l, j) => renderLine(l, j))}
-      </ul>
-    );
-    listBuffer = [];
-  };
-
-  lines.forEach((line, i) => {
-    if (line.trim().startsWith('・')) {
-      if (listBuffer.length === 0) listStart = i;
-      listBuffer.push(line);
-    } else {
-      flushList(listStart);
-      const node = renderLine(line, i);
-      if (node) nodes.push(node);
-    }
-  });
-  flushList(listStart);
+  const markdown = preprocessMarkdown(translation.summaryJa);
 
   return (
     <section className="space-y-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="text-xl font-bold text-orange-600 border-b border-orange-100 pb-2">
         {translation.titleJa}
       </h2>
-      <div className="space-y-3">{nodes}</div>
+      <div className="space-y-3">
+        <ReactMarkdown
+          components={{
+            p: ({ children }) => <p className="leading-relaxed">{children}</p>,
+            ul: ({ children }) => (
+              <ul className="space-y-1 text-lg list-none">{children}</ul>
+            ),
+            li: ({ children }) => (
+              <li className="ml-2 text-base leading-relaxed">{children}</li>
+            ),
+            strong: ({ children }) => <strong>{children}</strong>,
+          }}
+        >
+          {markdown}
+        </ReactMarkdown>
+      </div>
       {translation.warning ? (
         <p className="text-sm text-amber-700">{translation.warning}</p>
       ) : null}
