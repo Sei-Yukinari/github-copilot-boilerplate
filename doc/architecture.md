@@ -35,7 +35,7 @@ graph TB
     end
 
     Frontend -->|HTTP/HTTPS| AppRouter
-    AppRouter -->|GET /topstories.json<br/>GET /item/（id）.json| HN
+    AppRouter -->|GET /topstories.json<br/>GET /item/:id.json| HN
     AppRouter -->|POST /generateContent| Gemini
 
     style Client fill:#e1f5ff
@@ -134,7 +134,7 @@ sequenceDiagram
     Page->>HNLib: getTopStories()
     HNLib->>HNAPI: GET /v0/topstories.json
     HNAPI-->>HNLib: [記事ID配列]
-    HNLib->>HNAPI: GET /v0/item/{id}.json（並列）
+    HNLib->>HNAPI: GET /v0/item/:id.json（並列）
     HNAPI-->>HNLib: 記事詳細データ（×30件）
     HNLib-->>Page: stories[]（Next.js Data Cache: 5分）
     Page-->>Browser: HTML/React レンダリング
@@ -158,7 +158,7 @@ sequenceDiagram
     User->>Browser: 記事カードをクリック
     Browser->>DetailPage: /story/[id] へ遷移
     DetailPage->>HNLib: getStoryById(id)
-    HNLib->>HNAPI: GET /v0/item/{id}.json
+    HNLib->>HNAPI: GET /v0/item/:id.json
     HNAPI-->>HNLib: 記事データ
     HNLib-->>DetailPage: story
     DetailPage->>TranslateAPI: POST /api/translate（story）
