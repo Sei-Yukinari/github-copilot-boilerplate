@@ -53,7 +53,7 @@ graph TB
 | スタイリング      | Tailwind CSS | 3.x               | ユーティリティファースト CSS |
 | HTTP クライアント | Fetch API    | Native            | API通信                      |
 | ORM               | Prisma       | latest            | DB操作（PostgreSQL）         |
-| データベース      | PostgreSQL   | -                 | 翻訳キャッシュ永続化         |
+| データベース      | PostgreSQL   | 17                | 翻訳キャッシュ永続化         |
 | ランタイム        | Node.js      | 24+               | サーバーサイド実行           |
 
 ---
